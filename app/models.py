@@ -11,7 +11,7 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(String, primary_key=True, index=True)
-    name = Column(String, index=True)
+    email = Column(String, index=True)
     register_date = Column(DateTime(timezone=True), server_default=func.now())
 
 class Category(Base):

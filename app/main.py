@@ -31,5 +31,4 @@ def read_root():
 
 @app.get("/health")
 def health_check():
-    """Endpoint para verificar que la API está viva"""
     return {"status": "healthy"}

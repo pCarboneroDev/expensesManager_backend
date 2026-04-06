@@ -1,3 +1,5 @@
+from datetime import date
+
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from typing import List, Optional
@@ -21,13 +23,14 @@ router = APIRouter(
 #     return transactions
 
 
-
+    
 @router.get("", response_model=list[schemas.TransactionsResponse])
 def get_transactions(
     skip: int = Query(0, ge=0, description="Registros a saltar"),
     limit: int = Query(100, ge=1, le=500, description="Límite de registros"),
     category_id: Optional[int] = Query(None, description="Filtrar por ID de categoría"),
     date: Optional[str] = Query(None, min_length=1, description="Filtrar por cantidad (búsqueda parcial)"),
+    user_id: Optional[str] = Query(None, description="Filtrar por ID de usuario"),
     db: Session = Depends(get_db)
 ):
     transactions = transactions_dal.get_filtered_transactions(
@@ -35,16 +38,25 @@ def get_transactions(
         skip=skip,
         limit=limit,
         category_id=category_id,
-        date=date
+        date=date,
+        user_id=user_id
     )
     
     return transactions
-    # return schemas.PaginatedTransactionsResponse(
-    #     items=transactions,
-    #     skip=skip,
-    #     limit=limit,
-    # )
 
+
+@router.get("/last", response_model=list[schemas.TransactionsResponse])
+def get_last_transactions(
+    limit: int = Query(10, ge=1, le=100, description="Límite de registros"),
+    db: Session = Depends(get_db),
+    user_id: Optional[str] = Query(None, description="Filtrar por ID de usuario")
+):
+    transactions = transactions_dal.get_last_transactions(
+        db,
+        limit=limit,
+        user_id=user_id
+    )
+    return transactions
 
 
 

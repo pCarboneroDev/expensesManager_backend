@@ -35,6 +35,29 @@ def get_transactions(db: Session, skip: int = 0, limit: int = 100):
         )  
     return trans_ent
 
+def get_last_transactions(db: Session, limit: int = 10, user_id: Optional[str] = None):
+    #return db.query(models.Transaction).offset(skip).limit(limit).all()
+    transactions = db.query(models.Transaction).filter(models.Transaction.user_id == user_id).order_by(models.Transaction.date.desc()).limit(limit).all()
+    
+    trans_ent = []
+    for t in transactions:
+        new_category = get_category(db, t.id_category)
+
+        trans_ent.append(
+            TransactionEntity(
+                id=t.id,
+                date=t.date,
+                amount=t.amount,
+                transaction_type=t.transaction_type,
+                user_id=t.user_id,
+                category = models.Category(
+                    id= new_category.id,
+                    name= new_category.name
+                )
+            )
+        )  
+    return trans_ent
+
 def get_month_transactions(db: Session, skip: int = 0, limit: int = 100):
     transactions = db.query(models.Transaction).filter(
     extract('month', models.Transaction.date) == datetime.now().month,  
@@ -123,9 +146,13 @@ def get_filtered_transactions(
     skip: int = 0, 
     limit: int = 100,
     category_id: Optional[int] = None,
-    date: Optional[str] = None
+    date: Optional[str] = None,
+    user_id: Optional[str] = None
 ):
     query = db.query(models.Transaction)
+
+    if user_id:
+        query = query.filter(models.Transaction.user_id == user_id)
     
     # Aplicar filtros
     if category_id:

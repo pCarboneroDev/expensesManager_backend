@@ -32,3 +32,10 @@ def read_user(usuario_id: int, db: Session = Depends(get_db)):
     if db_usuario is None:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
     return db_usuario
+
+@router.post("", response_model=schemas.UsersResponse)
+def create_user(user: schemas.CreateUser, db: Session = Depends(get_db)):
+    db_usuario = users_dal.get_usuario(db, usuario_id=user.id)
+    if db_usuario:
+        raise HTTPException(status_code=400, detail="Id already exists")
+    return users_dal.create_user(db=db, user=user)

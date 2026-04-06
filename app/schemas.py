@@ -8,14 +8,14 @@ from app.utils.filters import transaction_filters
 from .models import Transaction_enum
 
 # Esquema para crear un usuario (lo que la API recibe)
-# class UsuarioCreate(BaseModel):
-#     nombre: str
-#     email: EmailStr  # Validación automática de email
+class CreateUser(BaseModel):
+    id: str
+    email: EmailStr
 
 # Esquema para responder con un usuario (lo que la API devuelve)
 class UsersResponse(BaseModel):
     id: str
-    name: str
+    email: str
     register_date: datetime
 
     class Config:
