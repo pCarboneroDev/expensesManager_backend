@@ -28,7 +28,7 @@ router = APIRouter(
 def get_transactions(
     skip: int = Query(0, ge=0, description="Registros a saltar"),
     limit: int = Query(100, ge=1, le=500, description="Límite de registros"),
-    category_id: Optional[int] = Query(None, description="Filtrar por ID de categoría"),
+    category_id: Optional[str] = Query(None, description="Filtrar por ID de categoría"),
     date: Optional[str] = Query(None, min_length=1, description="Filtrar por cantidad (búsqueda parcial)"),
     user_id: Optional[str] = Query(None, description="Filtrar por ID de usuario"),
     db: Session = Depends(get_db)
@@ -62,7 +62,7 @@ def get_last_transactions(
 
 
 @router.get("/{transaction_id}", response_model=schemas.TransactionsResponse)
-def read_transaction(transaction_id: int, db: Session = Depends(get_db)):
+def read_transaction(transaction_id: str, db: Session = Depends(get_db)):
     db_transaction = transactions_dal.get_transaction(db, transaction_id=transaction_id)
     if db_transaction is None:
         raise HTTPException(status_code=404, detail="transaction not found")
@@ -77,7 +77,7 @@ def create_transaction(transaction: schemas.CreateTransaction, db: Session = Dep
     return transactions_dal.create_transaction(db=db, transaction=transaction)
 
 @router.delete("/{transaction_id}")
-def delete_transaction(transaction_id: int, db: Session = Depends(get_db)):
+def delete_transaction(transaction_id: str, db: Session = Depends(get_db)):
     deleted = transactions_dal.delete_transaction(db = db, transaction_id = transaction_id)
     
     if deleted is None:
@@ -88,7 +88,7 @@ def delete_transaction(transaction_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail="Error deleting transaction")
     
 @router.put("/{transaction_id}", response_model=schemas.TransactionsResponse)
-def update_transaction(transaction_id: int, transaction: schemas.CreateTransaction, db: Session = Depends(get_db)):
+def update_transaction(transaction_id: str, transaction: schemas.CreateTransaction, db: Session = Depends(get_db)):
     updated_transaction = transactions_dal.update_transaction(db=db, transaction_id=transaction_id, transaction=transaction)
     
     if updated_transaction is None:
