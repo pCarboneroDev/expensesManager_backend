@@ -6,6 +6,7 @@ class transaction_filters(enum.Enum):
     WEEK = "week"
     MONTH = "month"
     YEAR = "year"
+    ALL = "all"
 
 
 class PaginatedTransaction:

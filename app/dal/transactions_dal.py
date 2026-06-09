@@ -175,6 +175,8 @@ def get_filtered_transactions(
             start_of_week = now - timedelta(days=now.weekday())  # Lunes de la semana actual
             end_of_week = start_of_week + timedelta(days=6)  # Domingo de la semana actual
             query = query.filter(models.Transaction.date >= start_of_week, models.Transaction.date <= end_of_week)
+        elif date.lower() in [transaction_filters.ALL.value, transaction_filters.ALL.name.lower()]:
+            pass  # No aplicar ningún filtro de fecha
             
     
     transactions = query.offset(skip).limit(limit).all()
