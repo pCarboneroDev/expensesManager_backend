@@ -17,17 +17,17 @@ class User(Base):
 class Category(Base):
     __tablename__ = "categories"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(String, primary_key=True, index=True)
     name = Column(String, index=True)
 
 
 class Transaction(Base):
     __tablename__ = "transactions"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(String, primary_key=True, index=True)
     date = Column(DateTime(timezone=True), index=True)
     amount = Column(Float, index=True)
     transaction_type = Column(Enum(Transaction_enum))
     user_id = Column(String, ForeignKey("users.id", onupdate="CASCADE", ondelete="CASCADE"), nullable=False)
-    id_category = Column(Integer, ForeignKey("categories.id", onupdate="CASCADE"), nullable=False)
+    id_category = Column(String, ForeignKey("categories.id", onupdate="CASCADE"), nullable=False)
 

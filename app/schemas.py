@@ -22,7 +22,7 @@ class UsersResponse(BaseModel):
         from_attributes = True  # Permite crear el esquema desde un modelo de SQLAlchemy
 
 class CategoriesResponse(BaseModel):
-    id: int
+    id: str
     name: str
 
     class Config:
@@ -41,7 +41,7 @@ class CategoriesResponse(BaseModel):
 #         from_attributes = True
 
 class TransactionsResponse(BaseModel):
-    id: int
+    id: str
     date: datetime
     amount: float
     transaction_type: Transaction_enum
@@ -52,11 +52,12 @@ class TransactionsResponse(BaseModel):
         from_attributes = True
 
 class CreateTransaction(BaseModel):
+    id: str
     date: datetime
     amount: float
     transaction_type: Transaction_enum
     user_id: str
-    id_category: int
+    id_category: str
 
     class Config:
         from_attributes = True

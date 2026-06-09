@@ -10,7 +10,7 @@ from .categories_dal import get_category
 from ..utils.filters import transaction_filters
 
 
-def get_transaction(db: Session, transaction_id: int):
+def get_transaction(db: Session, transaction_id: str):
     return db.query(models.Transaction).filter(models.Transaction.id == transaction_id).first()
 
 def get_transactions(db: Session, skip: int = 0, limit: int = 100):
@@ -84,6 +84,7 @@ def get_month_transactions(db: Session, skip: int = 0, limit: int = 100):
 def create_transaction(db: Session, transaction: schemas.CreateTransaction):
     # usuario es un objeto UsuarioCreate validado
     db_transaction = models.Transaction(
+        id = transaction.id,
         date = transaction.date, 
         amount = transaction.amount, 
         transaction_type = transaction.transaction_type, 
@@ -110,7 +111,7 @@ def create_transaction(db: Session, transaction: schemas.CreateTransaction):
     )
     return transaction
 
-def delete_transaction(db: Session, transaction_id: int):
+def delete_transaction(db: Session, transaction_id: str):
     try:
         transaction_del = get_transaction(db=db, transaction_id=transaction_id)
         if not transaction_del:
@@ -122,7 +123,7 @@ def delete_transaction(db: Session, transaction_id: int):
         db.rollback()
         return False
     
-def update_transaction(db: Session, transaction_id: int, transaction: schemas.CreateTransaction):
+def update_transaction(db: Session, transaction_id: str, transaction: schemas.CreateTransaction):
     try:
         transaction_upd = get_transaction(db=db, transaction_id=transaction_id)
         if not transaction_upd:
@@ -145,7 +146,7 @@ def get_filtered_transactions(
     db: Session, 
     skip: int = 0, 
     limit: int = 100,
-    category_id: Optional[int] = None,
+    category_id: Optional[str] = None,
     date: Optional[str] = None,
     user_id: Optional[str] = None
 ):
@@ -174,6 +175,8 @@ def get_filtered_transactions(
             start_of_week = now - timedelta(days=now.weekday())  # Lunes de la semana actual
             end_of_week = start_of_week + timedelta(days=6)  # Domingo de la semana actual
             query = query.filter(models.Transaction.date >= start_of_week, models.Transaction.date <= end_of_week)
+        elif date.lower() in [transaction_filters.ALL.value, transaction_filters.ALL.name.lower()]:
+            pass  # No aplicar ningún filtro de fecha
             
     
     transactions = query.offset(skip).limit(limit).all()
